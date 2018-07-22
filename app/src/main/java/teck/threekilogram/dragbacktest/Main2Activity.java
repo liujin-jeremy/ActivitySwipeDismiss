@@ -38,13 +38,16 @@ public class Main2Activity extends AppCompatActivity {
             super.onCreate(savedInstanceState);
             setContentView(R.layout.activity_main2);
 
+            /* 创建工具 */
             mSwipeDismiss = new SwipeDismiss(this);
+            /* 设置触发点,小于该触发点才会侧滑 */
             mSwipeDismiss.setCouldSwipeX(200);
       }
 
       @Override
       public boolean onTouchEvent (MotionEvent event) {
 
+            /* 传递给工具触摸事件 */
             mSwipeDismiss.onActivityTouchEvent(event);
             return true;
       }
