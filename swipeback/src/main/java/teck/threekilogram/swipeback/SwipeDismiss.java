@@ -3,20 +3,16 @@ package teck.threekilogram.swipeback;
 import android.animation.Animator;
 import android.animation.Animator.AnimatorListener;
 import android.app.Activity;
-import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.GradientDrawable;
-import android.support.annotation.IdRes;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.OnGestureListener;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
 import android.view.ViewParent;
 import android.view.Window;
+import android.widget.FrameLayout;
 import java.lang.ref.WeakReference;
 
 /**
@@ -31,19 +27,59 @@ public class SwipeDismiss {
 
       private ViewGroup           mAllContent;
       private GestureDetector     mGestureDetector;
+      private GestureListener     mGestureListener;
       private SwipeFinishListener mSwipeFinishListener;
+
+      private int mShadowViewWidth = 80;
+      private ShadowView mShadowView;
 
       public SwipeDismiss (Activity activity) {
 
+            /* find out content view container */
+
             Window window = activity.getWindow();
-            View contentView = window.findViewById(Window.ID_ANDROID_CONTENT);
+            final View contentView = window.findViewById(Window.ID_ANDROID_CONTENT);
+
+            /* find out actionBar and contentView container */
+
             ViewParent parent = contentView.getParent();
+
             if(parent != null) {
                   mAllContent = (ViewGroup) parent;
+
+                  /* find out first frameLayout which contains all content, then add a shadowView */
+
+                  ViewParent contentParent = mAllContent.getParent();
+                  while(contentParent != null) {
+                        if(contentParent instanceof FrameLayout) {
+
+                              mShadowView = new ShadowView(activity);
+                              ((FrameLayout) contentParent)
+                                  .addView(
+                                      mShadowView,
+                                      new FrameLayout.LayoutParams(
+                                          mShadowViewWidth,
+                                          LayoutParams.MATCH_PARENT
+                                      )
+                                  );
+                              mShadowView.setX(-mShadowViewWidth);
+                              break;
+                        }
+
+                        contentParent = contentParent.getParent();
+                  }
             }
 
             mSwipeFinishListener = new SwipeFinishListener(activity);
-            mGestureDetector = new GestureDetector(activity, new GestureListener());
+            mGestureListener = new GestureListener();
+            mGestureDetector = new GestureDetector(activity, mGestureListener);
+      }
+
+      public void setCouldSwipeX (float x) {
+
+            if(mGestureListener != null) {
+                  mGestureListener.mStartSwipeX = x;
+            }
       }
 
       /**
@@ -54,11 +90,18 @@ public class SwipeDismiss {
       private void moveAllContent (float distance) {
 
             if(mAllContent != null) {
-                  float x = mAllContent.getX() + distance;
+                  float startX = mAllContent.getX();
+                  float x = startX + distance;
                   if(x < 0) {
                         x = 0;
                   }
                   mAllContent.setX(x);
+
+                  if(mShadowView != null) {
+
+                        float moved = x - startX;
+                        mShadowView.setX(mShadowView.getX() + moved);
+                  }
             }
       }
 
@@ -68,16 +111,7 @@ public class SwipeDismiss {
 
             if(event.getAction() == MotionEvent.ACTION_UP && mAllContent != null) {
 
-                  float x = mAllContent.getX();
-                  int width = mAllContent.getWidth();
-
-                  if(x < width / 4) {
-
-                        mAllContent.animate().x(0).setListener(mSwipeFinishListener).start();
-                  } else {
-
-                        mAllContent.animate().x(width).setListener(mSwipeFinishListener).start();
-                  }
+                  mGestureListener.onUp();
             }
       }
 
@@ -86,10 +120,36 @@ public class SwipeDismiss {
        */
       private class GestureListener implements OnGestureListener {
 
+            private boolean isToMove;
+            private float mStartSwipeX = 100;
+
             @Override
             public boolean onDown (MotionEvent e) {
 
-                  return false;
+                  isToMove = e.getX() <= mStartSwipeX;
+                  return true;
+            }
+
+            public void onUp () {
+
+                  /* 手指抬起后如何处理activity */
+
+                  float x = mAllContent.getX();
+                  int width = mAllContent.getWidth();
+
+                  if(x < width / 4) {
+
+                        mAllContent.animate().x(0).setListener(mSwipeFinishListener).start();
+                        if(mShadowView != null) {
+                              mShadowView.animate().x(-mShadowViewWidth).start();
+                        }
+                  } else {
+
+                        mAllContent.animate().x(width).setListener(mSwipeFinishListener).start();
+                        if(mShadowView != null) {
+                              mShadowView.animate().x(width).start();
+                        }
+                  }
             }
 
             @Override
@@ -109,7 +169,11 @@ public class SwipeDismiss {
                 float distanceX, float distanceY) {
 
                   if(Math.abs(distanceX) > Math.abs(distanceY)) {
-                        moveAllContent(-distanceX);
+
+                        if(isToMove) {
+                              moveAllContent(-distanceX);
+                        }
+
                         return true;
                   }
 
@@ -171,22 +235,6 @@ public class SwipeDismiss {
             @Override
             public void onAnimationRepeat (Animator animation) {
 
-            }
-      }
-
-      /**
-       * 阴影类
-       */
-      private class ShadowView extends View {
-
-            private Drawable mDrawable;
-
-            public ShadowView (Context context) {
-
-                  super(context);
-                  int[] colors = new int[]{0x00000000, 0x17000000, 0x43000000};
-                  mDrawable = new GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT, colors);
-                  setBackground(mDrawable);
             }
       }
 }

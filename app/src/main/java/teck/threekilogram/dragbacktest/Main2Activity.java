@@ -39,6 +39,7 @@ public class Main2Activity extends AppCompatActivity {
             setContentView(R.layout.activity_main2);
 
             mSwipeDismiss = new SwipeDismiss(this);
+            mSwipeDismiss.setCouldSwipeX(200);
       }
 
       @Override
