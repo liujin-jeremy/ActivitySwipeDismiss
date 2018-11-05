@@ -3,7 +3,6 @@ package teck.threekilogram.swipeback;
 import android.animation.Animator;
 import android.animation.Animator.AnimatorListener;
 import android.app.Activity;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.OnGestureListener;
 import android.view.MotionEvent;
@@ -23,46 +22,44 @@ import java.lang.ref.WeakReference;
  */
 public class SwipeDismiss {
 
-      private static final String TAG = "SwipeDismiss";
-
       private ViewGroup           mAllContent;
       private GestureDetector     mGestureDetector;
       private GestureListener     mGestureListener;
       private SwipeFinishListener mSwipeFinishListener;
 
-      private int mShadowViewWidth = 80;
+      private int        mShadowViewWidth = 80;
       private ShadowView mShadowView;
 
-      public SwipeDismiss (Activity activity) {
+      public SwipeDismiss ( Activity activity ) {
 
             /* find out content view container */
 
             Window window = activity.getWindow();
-            final View contentView = window.findViewById(Window.ID_ANDROID_CONTENT);
+            final View contentView = window.findViewById( Window.ID_ANDROID_CONTENT );
 
             /* find out actionBar and contentView container */
 
             ViewParent parent = contentView.getParent();
 
-            if(parent != null) {
+            if( parent != null ) {
                   mAllContent = (ViewGroup) parent;
 
                   /* find out first frameLayout which contains all content, then add a shadowView */
 
                   ViewParent contentParent = mAllContent.getParent();
-                  while(contentParent != null) {
-                        if(contentParent instanceof FrameLayout) {
+                  while( contentParent != null ) {
+                        if( contentParent instanceof FrameLayout ) {
 
-                              mShadowView = new ShadowView(activity);
-                              ((FrameLayout) contentParent)
+                              mShadowView = new ShadowView( activity );
+                              ( (ViewGroup) contentParent )
                                   .addView(
                                       mShadowView,
-                                      new FrameLayout.LayoutParams(
+                                      new LayoutParams(
                                           mShadowViewWidth,
                                           LayoutParams.MATCH_PARENT
                                       )
                                   );
-                              mShadowView.setX(-mShadowViewWidth);
+                              mShadowView.setX( -mShadowViewWidth );
                               break;
                         }
 
@@ -70,14 +67,14 @@ public class SwipeDismiss {
                   }
             }
 
-            mSwipeFinishListener = new SwipeFinishListener(activity);
+            mSwipeFinishListener = new SwipeFinishListener( activity );
             mGestureListener = new GestureListener();
-            mGestureDetector = new GestureDetector(activity, mGestureListener);
+            mGestureDetector = new GestureDetector( activity, mGestureListener );
       }
 
-      public void setCouldSwipeX (float x) {
+      public void setCouldSwipeX ( float x ) {
 
-            if(mGestureListener != null) {
+            if( mGestureListener != null ) {
                   mGestureListener.mStartSwipeX = x;
             }
       }
@@ -87,29 +84,29 @@ public class SwipeDismiss {
        *
        * @param distance 按照距离移动content
        */
-      private void moveAllContent (float distance) {
+      private void moveAllContent ( float distance ) {
 
-            if(mAllContent != null) {
+            if( mAllContent != null ) {
                   float startX = mAllContent.getX();
                   float x = startX + distance;
-                  if(x < 0) {
+                  if( x < 0 ) {
                         x = 0;
                   }
-                  mAllContent.setX(x);
+                  mAllContent.setX( x );
 
-                  if(mShadowView != null) {
+                  if( mShadowView != null ) {
 
                         float moved = x - startX;
-                        mShadowView.setX(mShadowView.getX() + moved);
+                        mShadowView.setX( mShadowView.getX() + moved );
                   }
             }
       }
 
-      public void onActivityTouchEvent (MotionEvent event) {
+      public void onActivityTouchEvent ( MotionEvent event ) {
 
-            mGestureDetector.onTouchEvent(event);
+            mGestureDetector.onTouchEvent( event );
 
-            if(event.getAction() == MotionEvent.ACTION_UP && mAllContent != null) {
+            if( event.getAction() == MotionEvent.ACTION_UP && mAllContent != null ) {
 
                   mGestureListener.onUp();
             }
@@ -121,44 +118,45 @@ public class SwipeDismiss {
       private class GestureListener implements OnGestureListener {
 
             private boolean isToMove;
-            private float mStartSwipeX = 100;
+            private float   mStartSwipeX = 100;
 
             @Override
-            public boolean onDown (MotionEvent e) {
+            public boolean onDown ( MotionEvent e ) {
 
                   isToMove = e.getX() <= mStartSwipeX;
                   return true;
             }
 
-            public void onUp () {
+            public void onUp ( ) {
 
                   /* 手指抬起后如何处理activity */
 
                   float x = mAllContent.getX();
                   int width = mAllContent.getWidth();
 
-                  if(x < width / 4) {
+                  if( x < width / 4 ) {
 
-                        mAllContent.animate().x(0).setListener(mSwipeFinishListener).start();
-                        if(mShadowView != null) {
-                              mShadowView.animate().x(-mShadowViewWidth).start();
+                        mAllContent.animate().x( 0 ).setListener( mSwipeFinishListener ).start();
+                        if( mShadowView != null ) {
+                              mShadowView.animate().x( -mShadowViewWidth ).start();
                         }
                   } else {
 
-                        mAllContent.animate().x(width).setListener(mSwipeFinishListener).start();
-                        if(mShadowView != null) {
-                              mShadowView.animate().x(width).start();
+                        mAllContent.animate().x( width ).setListener( mSwipeFinishListener )
+                                   .start();
+                        if( mShadowView != null ) {
+                              mShadowView.animate().x( width ).start();
                         }
                   }
             }
 
             @Override
-            public void onShowPress (MotionEvent e) {
+            public void onShowPress ( MotionEvent e ) {
 
             }
 
             @Override
-            public boolean onSingleTapUp (MotionEvent e) {
+            public boolean onSingleTapUp ( MotionEvent e ) {
 
                   return false;
             }
@@ -166,12 +164,12 @@ public class SwipeDismiss {
             @Override
             public boolean onScroll (
                 MotionEvent e1, MotionEvent e2,
-                float distanceX, float distanceY) {
+                float distanceX, float distanceY ) {
 
-                  if(Math.abs(distanceX) > Math.abs(distanceY)) {
+                  if( Math.abs( distanceX ) > Math.abs( distanceY ) ) {
 
-                        if(isToMove) {
-                              moveAllContent(-distanceX);
+                        if( isToMove ) {
+                              moveAllContent( -distanceX );
                         }
 
                         return true;
@@ -181,13 +179,13 @@ public class SwipeDismiss {
             }
 
             @Override
-            public void onLongPress (MotionEvent e) {
+            public void onLongPress ( MotionEvent e ) {
 
             }
 
             @Override
             public boolean onFling (
-                MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+                MotionEvent e1, MotionEvent e2, float velocityX, float velocityY ) {
 
                   return false;
             }
@@ -200,40 +198,40 @@ public class SwipeDismiss {
 
             private WeakReference<Activity> mReference;
 
-            SwipeFinishListener (Activity activity) {
+            SwipeFinishListener ( Activity activity ) {
 
-                  mReference = new WeakReference<>(activity);
+                  mReference = new WeakReference<>( activity );
             }
 
             @Override
-            public void onAnimationStart (Animator animation) {
+            public void onAnimationStart ( Animator animation ) {
 
             }
 
             @Override
-            public void onAnimationEnd (Animator animation) {
+            public void onAnimationEnd ( Animator animation ) {
 
-                  if(mAllContent != null) {
+                  if( mAllContent != null ) {
 
                         float x = mAllContent.getX();
-                        if(x != 0) {
+                        if( x != 0 ) {
 
                               Activity activity = mReference.get();
-                              if(activity != null) {
+                              if( activity != null ) {
                                     activity.finish();
-                                    activity.overridePendingTransition(0, 0);
+                                    activity.overridePendingTransition( 0, 0 );
                               }
                         }
                   }
             }
 
             @Override
-            public void onAnimationCancel (Animator animation) {
+            public void onAnimationCancel ( Animator animation ) {
 
             }
 
             @Override
-            public void onAnimationRepeat (Animator animation) {
+            public void onAnimationRepeat ( Animator animation ) {
 
             }
       }
