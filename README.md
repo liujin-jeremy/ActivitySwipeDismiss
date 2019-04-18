@@ -1,8 +1,10 @@
-[实现Activity的滑动返回效果 \- CSDN博客](https://blog.csdn.net/eiuly/article/details/46472783)
-
-
-
 # activity 侧滑关闭辅助类
+
+## 引入
+
+```
+implementation 'tech.liujin:swipeback:1.0.0'
+```
 
 ### 示例
 
@@ -43,11 +45,5 @@ public class Main2Activity extends AppCompatActivity {
 ![](img/1.gif)
 
 
-
-## 引入
-
-```
-implementation 'tech.threekilogram:swipeback:2.0.0'
-```
 
 
