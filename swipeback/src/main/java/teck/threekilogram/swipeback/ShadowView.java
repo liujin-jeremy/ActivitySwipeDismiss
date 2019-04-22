@@ -20,8 +20,6 @@ import android.view.View;
  */
 public class ShadowView extends View {
 
-      private Drawable mDrawable;
-
       public ShadowView (Context context) {
 
             this(context,null,0);
@@ -41,7 +39,7 @@ public class ShadowView extends View {
       private void initBackGround () {
 
             int[] colors = new int[]{0x00000000, 0x17000000, 0x43000000};
-            mDrawable = new GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT, colors);
-            setBackground(mDrawable);
+            Drawable drawable = new GradientDrawable( GradientDrawable.Orientation.LEFT_RIGHT, colors );
+            setBackground( drawable );
       }
 }

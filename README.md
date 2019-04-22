@@ -11,14 +11,7 @@ implementation 'tech.liujin:swipeback:1.0.0'
 ```
 public class Main2Activity extends AppCompatActivity {
 
-      private static final String TAG = "Main2Activity";
       private SwipeDismiss mSwipeDismiss;
-
-      public static void start (Context context) {
-
-            Intent starter = new Intent(context, Main2Activity.class);
-            context.startActivity(starter);
-      }
 
       @Override
       protected void onCreate (Bundle savedInstanceState) {
