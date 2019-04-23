@@ -1,4 +1,4 @@
-package teck.threekilogram.swipeback;
+package teck.liujin.swipeback;
 
 import android.animation.Animator;
 import android.animation.Animator.AnimatorListener;

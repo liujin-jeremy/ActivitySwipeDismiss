@@ -1,4 +1,4 @@
-package teck.threekilogram.swipeback;
+package teck.liujin.swipeback;
 
 /**
  * @author: Liujin
@@ -16,29 +16,30 @@ import android.view.View;
 
 /**
  * 阴影类
+ *
  * @author liujin
  */
 public class ShadowView extends View {
 
-      public ShadowView (Context context) {
+      public ShadowView ( Context context ) {
 
-            this(context,null,0);
+            this( context, null, 0 );
       }
 
-      public ShadowView (Context context, @Nullable AttributeSet attrs) {
+      public ShadowView ( Context context, @Nullable AttributeSet attrs ) {
 
-            this(context, attrs,0);
+            this( context, attrs, 0 );
       }
 
-      public ShadowView (Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+      public ShadowView ( Context context, @Nullable AttributeSet attrs, int defStyleAttr ) {
 
-            super(context, attrs, defStyleAttr);
+            super( context, attrs, defStyleAttr );
             initBackGround();
       }
 
-      private void initBackGround () {
+      private void initBackGround ( ) {
 
-            int[] colors = new int[]{0x00000000, 0x17000000, 0x43000000};
+            int[] colors = new int[]{ 0x00000000, 0x17000000, 0x43000000 };
             Drawable drawable = new GradientDrawable( GradientDrawable.Orientation.LEFT_RIGHT, colors );
             setBackground( drawable );
       }
