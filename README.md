@@ -3,7 +3,7 @@
 ## 引入
 
 ```
-implementation 'tech.liujin:swipeBack:1.0.2'
+implementation 'tech.liujin:swipeBack:1.0.3'
 ```
 
 ### 示例

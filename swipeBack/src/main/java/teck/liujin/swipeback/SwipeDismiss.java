@@ -78,6 +78,7 @@ public class SwipeDismiss {
                                   )
                               );
                               mShadowView.setX( -mShadowViewWidth );
+                              mShadowView.setY( 0 );
                               break;
                         }
 
